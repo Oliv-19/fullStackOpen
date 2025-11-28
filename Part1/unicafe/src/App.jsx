@@ -1,12 +1,27 @@
 import { useState } from 'react'
 
-function Statistics({type, totalNumber}){
+function Statistics({good, neutral, bad}){
+  const all= good+neutral+bad
+
+  const average= (good-bad)/all
+  const positive= (good/all)*100
+
+
   return (
-    <p>{type} {totalNumber}</p>
+    <div>
+      <p>good {good} </p>
+      <p>neutral {neutral} </p>
+      <p>bad {bad} </p>
+      <p>all {all}</p>
+      <p>average {average}</p>
+      <p>positive {positive}%</p>
+
+    </div>
+
   )
 }
-function Button({type, setFunc,num}){
-  const handleClick=()=>setFunc(num +1)
+function Button({type, setFunc, state}){
+  const handleClick=()=>setFunc(state+ 1 )
 
   return (
     <button onClick={handleClick}>{type}</button>
@@ -21,14 +36,12 @@ function App() {
   return (
     <div>
       <h1>give feedback</h1>
-      <Button type='good' setFunc={setGood} num={good}/>
-      <Button type='neutral' setFunc={setNeutral} num={neutral}/>
-      <Button type='bad' setFunc={setBad} num={bad}/>
+      <Button type='good' setFunc={setGood} state={good}/>
+      <Button type='neutral' setFunc={setNeutral} state={neutral}/>
+      <Button type='bad' setFunc={setBad} state={bad}/>
 
       <h1>statistics</h1>
-      <Statistics type='good' totalNumber={good}/>
-      <Statistics type='neutral' totalNumber={neutral}/>
-      <Statistics type='bad' totalNumber={bad}/>
+      <Statistics  good={good} neutral={neutral} bad={bad}/>
 
     </div>
   )
