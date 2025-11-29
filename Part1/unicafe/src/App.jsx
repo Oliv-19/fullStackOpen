@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+function StatisticLine({text, value}){
+  return <p>{text} {value} </p>
+}
+
 function Statistics({good, neutral, bad}){
   const all= good+neutral+bad
   const average= (good-bad)/all
@@ -10,17 +14,14 @@ function Statistics({good, neutral, bad}){
   }
 
   return (
-        <div>
-          <p>good {good} </p>
-          <p>neutral {neutral} </p>
-          <p>bad {bad} </p>
-          <p>all {all}</p>
-          <p>average {average}</p>
-          <p>positive {positive}%</p>
-    
-        </div>
-
-
+    <div>
+      <StatisticLine text="good" value ={good} />
+      <StatisticLine text="neutral" value ={neutral} />
+      <StatisticLine text="bad" value ={bad} />
+      <StatisticLine text="all" value ={all} />
+      <StatisticLine text="average" value ={average} />
+      <StatisticLine text="positive" value ={positive+'%'} />
+    </div>
   )
 }
 function Button({type, setFunc, state}){
