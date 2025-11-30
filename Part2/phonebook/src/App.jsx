@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
 function App() {
   const [persons, setPersons] = useState([
@@ -9,12 +12,12 @@ function App() {
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [filter, setFilter] = useState([])
+  const [filter, setFilter] = useState('')
 
   const handleSubmit = (e)=>{
     e.preventDefault()
     persons.find(obj=> obj.name === newName)? alert(`${newName} is already added to phonebook`)
-    : setPersons([...persons, {name: newName, number: newNumber}])
+    : setPersons([...persons, {name: newName, number: newNumber, id: persons.length+1}])
     setNewName('')
     setNewNumber('')
     setFilter([])
@@ -26,42 +29,15 @@ function App() {
     setNewNumber(e.target.value)
   }
   const filterPersons = (e)=>{
-    const filtered= persons.filter(obj => obj.name.toLowerCase().includes(e.target.value.toLowerCase()))
-    setFilter(filtered)
+    setFilter(e.target.value)
   }
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with: 
-        <input type="text" onChange={filterPersons} />
-      </div>
-      <form onSubmit={handleSubmit}>
-        <h2>Add a new</h2>
-        <div>
-          name: <input name='name' value={newName} onChange={handleNameInput}/>
-        </div>
-        <div>
-          number: <input name='number' value={newNumber} onChange={handleNumberInput}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter filterPersons={filterPersons}/>
+      <PersonForm handleNumberInput={handleNumberInput} handleSubmit={handleSubmit} handleNameInput={handleNameInput} newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <div>
-        {filter.length === 0? (
-          <>
-            {persons.map(obj=>  <p key={obj.name}>{obj.name} {obj.number}</p>) }
-          </>
-        ):(
-          <>
-            {console.log(filter.length)}
-            {filter.map(obj=>  <p key={obj.name}>{obj.name} {obj.number}</p>) }
-          </>
-        )
-        }
-      </div>
+      <Persons persons={persons} filter={filter} />
     </div>
   )
 }
