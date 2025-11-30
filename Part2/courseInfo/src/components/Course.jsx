@@ -7,7 +7,7 @@ export default function Course({course}){
     <div>
       <Header courseName={course.name} />
       <Content parts={course.parts} />
-
+        <Total parts={course.parts} />
     </div>
   )
 }
