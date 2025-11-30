@@ -8,7 +8,9 @@ function App() {
 
   const handleSubmit = (e)=>{
     e.preventDefault()
-    setPersons([...persons, {name: newName}])
+    persons.find(obj=> obj.name === newName)? alert(`${newName} is already added to phonebook`)
+    : setPersons([...persons, {name: newName}])
+    setNewName('')
   }
   const handleInput = (e)=>{
     setNewName(e.target.value)
@@ -18,9 +20,8 @@ function App() {
       <h2>Phonebook</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          name: <input onChange={handleInput}/>
+          name: <input value={newName} onChange={handleInput}/>
         </div>
-        <div>debug: {newName}</div>
         <div>
           <button type="submit">add</button>
         </div>
