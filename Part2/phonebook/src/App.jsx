@@ -10,7 +10,7 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
-  const [message, setMessage] = useState(null)
+  const [message, setMessage] = useState({msg:null, isError: false})
 
   useEffect(()=>{
     personsService
@@ -28,6 +28,7 @@ function App() {
     personsService
     .create(newObj)
     .then(newPerson => setPersons(prevData =>prevData.concat(newPerson)))
+    setMessage(prevData => {return {...prevData, msg: `Added ${newName}`}})
   }
   const deletePerson= (obj)=>{
     window.confirm(`delete ${obj.name} ?`)
@@ -41,7 +42,13 @@ function App() {
     window.confirm(`${obj.name} is already added to phonebook, replace the old number with a new one?`)
     personsService
     .update(newObj)
-    .then(response => setPersons(prevData => prevData.map(p=> p.id == obj.id ? response: p)))
+    .then(response => {
+      setPersons(prevData => prevData.map(p=> p.id == obj.id ? response: p))
+      setMessage(prevData => {return {...prevData, msg: `Updated ${obj.name}`}})
+    }).catch(() =>{
+      setMessage({msg:`Information of ${obj.name} has already been removed from server`, isError:true} )
+
+    })
   }
   
   const handleSubmit = (e)=>{
@@ -51,8 +58,7 @@ function App() {
     setNewName('')
     setNewNumber('')
     setFilter([])
-    setMessage(personObj? `Updated ${personObj.name}`: `Added ${newName}`)
-    setTimeout(()=> setMessage(null) , 2000)
+    setTimeout(()=> setMessage({msg:null, isError: false}) , 2000)
   }
   const handleNameInput = (e)=>{
     setNewName(e.target.value)
