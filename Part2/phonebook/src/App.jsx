@@ -16,12 +16,24 @@ function App() {
       setPersons(response.data)
     })
 
-  }, [])
+  }, []) 
+
+  const savePerson= ()=>{
+    const newObj= {
+      name: newName, 
+      number: newNumber
+    }
+    axios.post('http://localhost:3001/persons', newObj)
+    .then(response => {
+      setPersons(persons.concat(response.data))
+
+    })
+  }
   
   const handleSubmit = (e)=>{
     e.preventDefault()
     persons.find(obj=> obj.name === newName)? alert(`${newName} is already added to phonebook`)
-    : setPersons([...persons, {name: newName, number: newNumber, id: persons.length+1}])
+    : savePerson()
     setNewName('')
     setNewNumber('')
     setFilter([])
