@@ -3,12 +3,14 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personsService from './services/persons'
+import Notification from './components/Notification'
 
 function App() {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(()=>{
     personsService
@@ -33,12 +35,13 @@ function App() {
       .deletePerson(obj.id)
       .then(() => setPersons(prevData => prevData.filter(p=> p.id != obj.id)))
   }
+
   const changePhoneNumber = (obj)=>{
     const newObj= {...obj, number: newNumber}
-    window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+    window.confirm(`${obj.name} is already added to phonebook, replace the old number with a new one?`)
     personsService
     .update(newObj)
-    .then(response => setPersons(persons.map(p=> p.id == obj.id ? response: p)))
+    .then(response => setPersons(prevData => prevData.map(p=> p.id == obj.id ? response: p)))
   }
   
   const handleSubmit = (e)=>{
@@ -48,6 +51,8 @@ function App() {
     setNewName('')
     setNewNumber('')
     setFilter([])
+    setMessage(personObj? `Updated ${personObj.name}`: `Added ${newName}`)
+    setTimeout(()=> setMessage(null) , 2000)
   }
   const handleNameInput = (e)=>{
     setNewName(e.target.value)
@@ -61,6 +66,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter filterPersons={filterPersons}/>
       <PersonForm handleNumberInput={handleNumberInput} handleSubmit={handleSubmit} handleNameInput={handleNameInput} newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
