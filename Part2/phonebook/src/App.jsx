@@ -25,19 +25,26 @@ function App() {
     }
     personsService
     .create(newObj)
-    .then(newPerson => setPersons(persons.concat(newPerson)))
+    .then(newPerson => setPersons(prevData =>prevData.concat(newPerson)))
   }
   const deletePerson= (obj)=>{
     window.confirm(`delete ${obj.name} ?`)
     personsService
       .deletePerson(obj.id)
-      .then(() => setPersons(persons.filter(p=> p.id != obj.id)))
+      .then(() => setPersons(prevData => prevData.filter(p=> p.id != obj.id)))
+  }
+  const changePhoneNumber = (obj)=>{
+    const newObj= {...obj, number: newNumber}
+    window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+    personsService
+    .update(newObj)
+    .then(response => setPersons(persons.map(p=> p.id == obj.id ? response: p)))
   }
   
   const handleSubmit = (e)=>{
     e.preventDefault()
-    persons.find(obj=> obj.name === newName)? alert(`${newName} is already added to phonebook`)
-    : savePerson()
+    const personObj= persons.find(obj=> obj.name === newName)
+    personObj? changePhoneNumber(personObj) : savePerson()
     setNewName('')
     setNewNumber('')
     setFilter([])
