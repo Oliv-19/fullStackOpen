@@ -25,8 +25,13 @@ function App() {
     }
     personsService
     .create(newObj)
-    .then(newPerson => {setPersons(persons.concat(newPerson))
-    })
+    .then(newPerson => setPersons(persons.concat(newPerson)))
+  }
+  const deletePerson= (obj)=>{
+    window.confirm(`delete ${obj.name} ?`)
+    personsService
+      .deletePerson(obj.id)
+      .then(() => setPersons(persons.filter(p=> p.id != obj.id)))
   }
   
   const handleSubmit = (e)=>{
@@ -52,7 +57,7 @@ function App() {
       <Filter filterPersons={filterPersons}/>
       <PersonForm handleNumberInput={handleNumberInput} handleSubmit={handleSubmit} handleNameInput={handleNameInput} newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} deletePerson={deletePerson}/>
     </div>
   )
 }
