@@ -1,24 +1,38 @@
+import { useState } from "react"
 import Country from "./Country"
 
 export default function Countries({countries, filter}){
-    const filtered = countries.filter(country => country.name.common.toLowerCase().includes(filter?.toLowerCase()))
+    const [country, setCountry] = useState(null)
+    const filtered =countries.filter(country => country.name.common.toLowerCase().includes(filter?.toLowerCase()))
+    if (filtered.length === 1 && !country){
+        setCountry(filtered[0])
+    }
+    
+    const showCountry = (countryObj)=>{
+        setCountry(countryObj)
+    }
     return (
         <>
-        {filtered.length === 1 ?(
-                <Country country={filtered[0]}/>
-            ):(
-                <div> {filtered.length < 10?(
+        {country?(
+            <Country country={country}/>
+        ) : (
+            <div> {filtered.length < 10?(
+                <>
+                    {filtered.map((country)=> {
+                        return <div key={country.name.common}>
+                            <p >{country.name.common}</p>
+                            <button onClick={()=> showCountry(country)}>Show</button>
+                        </div >
+                        })}
+                </>
+                ):(
                     <>
-                        {filtered.map((country)=> <p key={country.name.common}>{country.name.common}</p>)}
-                    </>
-                    ):(
-                        <>
-                        <p>Too many matches, specify another filter</p>
-                    </>
-                    )
-                }
-                </div>
-            )
+                    <p>Too many matches, specify another filter</p>
+                </>
+                )
+            }
+            </div>
+        )
         }
     </>
     )

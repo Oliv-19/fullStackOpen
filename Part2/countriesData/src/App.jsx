@@ -16,13 +16,14 @@ function App() {
     setSearchValue(e.target.value)
 
   }
+  
   return (
     <>
       <label >
         find countries 
         <input type="text" onChange={searchCountry}/>
       </label>
-      <Countries countries={countries} filter={searchValue}/>
+      <Countries key={searchValue} countries={countries} filter={searchValue} />
     </>
   )
 }
