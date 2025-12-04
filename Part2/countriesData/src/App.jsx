@@ -11,7 +11,6 @@ function App() {
       .then(response => setCountries(response))
     
   }, [])
-
   const searchCountry = (e)=>{
     setSearchValue(e.target.value)
 

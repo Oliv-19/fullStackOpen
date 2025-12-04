@@ -7,7 +7,6 @@ export default function Countries({countries, filter}){
     if (filtered.length === 1 && !country){
         setCountry(filtered[0])
     }
-    
     const showCountry = (countryObj)=>{
         setCountry(countryObj)
     }
