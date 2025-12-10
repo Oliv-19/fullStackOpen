@@ -45,6 +45,17 @@ app.post('/api/persons', (request, response) => {
     const maxId = Math.floor(Math.random() * (persons.length * 12)) 
     
     const person = request.body
+
+    if (!person.name || !person.number) {
+        return response.status(400).json({ 
+            error: 'name or number missing' 
+        })
+    }else if(persons.find(p => p.name == person.name)){
+        return response.status(400).json({ 
+            error: 'name must be unique' 
+        })
+    }
+
     person.id = String(maxId +1)
     persons = persons.concat(person)
     response.json(persons)
