@@ -28,6 +28,11 @@ let persons = [
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const person = persons.find(p => p.id == id)
+    person ? response.json(person) : response.status(404).end()
+})
 app.get('/info', (request, response) => {
     let date = new Date()
   response.send(`<div>Phonebook has info for ${persons.length} people </br> ${date}</div>`)
