@@ -1,11 +1,15 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
+
 morgan.token('reqBody', (req,res)=> JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :reqBody'))
+
 let persons = [
     { 
       "id": "1",
@@ -62,7 +66,7 @@ app.post('/api/persons', (request, response) => {
 
     person.id = String(maxId +1)
     persons = persons.concat(person)
-    response.json(persons)
+    response.json(person)
 })
 
 app.get('/info', (request, response) => {
