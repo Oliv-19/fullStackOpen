@@ -57,29 +57,26 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const maxId = Math.floor(Math.random() * (persons.length * 12)) 
-    
-    const person = request.body
+    const body = request.body
 
-    if (!person.name || !person.number) {
+    if (!body.name || !body.number) {
         return response.status(400).json({ 
             error: 'name or number missing' 
         })
-    }else if(persons.find(p => p.name == person.name)){
-        return response.status(400).json({ 
-            error: 'name must be unique' 
-        })
     }
+    const person = new Persons({
+      name: body.name,
+      number: body.number
+    })
+    person.save().then(savedPerson=>{
+      response.json(savedPerson)
 
-    person.id = String(maxId +1)
-    persons = persons.concat(person)
-    response.json(person)
+    })
 })
 
 app.get('/info', (request, response) => {
     const date = new Date()
-    const personsLength = Persons.find({}).then(result=> result.length)
-  response.send(`<div>Phonebook has info for ${Persons.length} people </br> ${date}</div>`)
+    return Persons.find({}).then(result=> response.send(`<div>Phonebook has info for ${result.length} people </br> ${date}</div>`))
 })
 
 const PORT = process.env.PORT ||3001
