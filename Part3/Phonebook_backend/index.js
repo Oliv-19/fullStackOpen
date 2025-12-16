@@ -53,6 +53,24 @@ app.post('/api/persons', (request, response) => {
     })
 })
 
+app.put('/api/persons/:id', (req, res, next)=>{
+  const id = req.params.id
+  const {number} = req.body
+  Persons.findById(id)
+  .then(person=>{
+    if(!person){
+      return res.status(404).end()
+    }
+    person.number = number
+
+    return person.save().then(updatedPerson=>{
+      res.json(updatedPerson)
+    })
+
+  })
+  .catch(error => next(error))
+})
+
 app.get('/info', (request, response) => {
     const date = new Date()
     return Persons.find({}).then(result=> response.send(`<div>Phonebook has info for ${result.length} people </br> ${date}</div>`))
