@@ -51,8 +51,8 @@ function App() {
     .then(response => {
       setPersons(prevData => prevData.map(p=> p.id == obj.id ? response: p))
       setMessage(prevData => {return {...prevData, msg: `Updated ${obj.name}`}})
-    }).catch(() =>{
-      setMessage({msg:`Information of ${obj.name} has already been removed from server`, isError:true} )
+    }).catch((error) =>{
+      setMessage({msg:error.response.data.error, isError:true} )
 
     })
   }
