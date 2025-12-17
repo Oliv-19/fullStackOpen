@@ -19,11 +19,17 @@ app.get('/api/persons', (request, response) => {
     
   })
 })
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
-    Persons.findById(id).then(result=>{
-      response.json(result) 
+    Persons.findById(id)
+    .then(result=>{
+      if(result){
+        response.json(result) 
+      }else{
+        response.status(404).end()
+      }
     })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
