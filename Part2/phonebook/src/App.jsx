@@ -27,8 +27,14 @@ function App() {
     }
     personsService
     .create(newObj)
-    .then(newPerson => setPersons(prevData =>prevData.concat(newPerson)))
-    setMessage(prevData => {return {...prevData, msg: `Added ${newName}`}})
+    .then(newPerson => {
+      setPersons(prevData =>prevData.concat(newPerson))
+      setMessage(prevData => {return {...prevData, msg: `Added ${newName}`}})
+    })
+    .catch(error => {
+      setMessage({isError: true, msg: `${error.response.data.error}`})
+      console.log(error.response.data.error)
+    })
   }
   const deletePerson= (obj)=>{
     window.confirm(`delete ${obj.name} ?`)
