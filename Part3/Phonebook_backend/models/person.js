@@ -3,9 +3,9 @@ const mongoose = require('mongoose')
 const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery', false)
-mongoose.connect(url, {family: 4})
-.then(result=> console.log('connected to MongoDB'))
-.catch(error=> console.log('error connecting to mongodDB:', error.message))
+mongoose.connect(url, { family: 4 })
+.then(() => console.log('connected to MongoDB'))
+.catch(error => console.log('error connecting to mongodDB:', error.message))
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -20,7 +20,7 @@ const personSchema = new mongoose.Schema({
       validator: function(val){
         return /\d{2,3}-\d{7,8}/.test(val)
       },
-      message: props=> `${props.value} is not a valid phone number`
+      message: props => `${props.value} is not a valid phone number`
     },
     required:true
   },
@@ -28,10 +28,11 @@ const personSchema = new mongoose.Schema({
 personSchema.set('validateBeforeSave', true)
 personSchema.set('toJSON', {
     transform: (doc, obj) => {
-    obj.id = obj._id.toString()
-    delete obj._id
-    delete obj.__v
-}})
+      obj.id = obj._id.toString()
+      delete obj._id
+      delete obj.__v
+    }
+  })
 
 module.exports = mongoose.model('Person', personSchema)
 
