@@ -4,6 +4,28 @@ const dummy = (blogs) => {
 const totalLikes = (blogs) => {
     return blogs.length === 0? 0:blogs.reduce((prev, curr)=> prev + curr.likes,0)
 }
+const mostLikes = (blogs) => {
+    if(blogs.length == 0){
+        return {}
+    }
+    const authors = {}
+    blogs.forEach(blog => {
+        if(Object.keys(authors).includes(blog.author)){
+            authors[blog.author] = authors[blog.author]+ blog.likes
+        }else{
+            authors[blog.author] = blog.likes
+        }
+    });
+    const most =  Object.entries(authors).reduce((prev , curr)=> {
+       prev =  prev[1] < curr[1] ? curr : prev
+       return prev
+    },[Object.keys(authors).at(0), Object.values(authors).at(0)])
+
+    return {
+        author: most[0],
+        likes: most[1]
+    }
+}
 
 const favoriteBlog = (blogs) => {
     return blogs.length === 0? {} : blogs.reduce((prev, curr)=> {
@@ -39,5 +61,6 @@ module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
