@@ -23,6 +23,17 @@ test('all blogs are returned', async ()=> {
     assert.strictEqual(response.body.length, helper.blogs.length)
 })
 
+test('unique identifier is named id instead of _id', async ()=> {
+    const response = await api
+    .get(`/api/blogs`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual('_id' in response.body[0], false)
+    assert.strictEqual('id' in response.body[0], true)
+
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
