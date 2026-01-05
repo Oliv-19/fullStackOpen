@@ -34,6 +34,27 @@ test('unique identifier is named id instead of _id', async ()=> {
 
 })
 
+test('saves new blog succesfully', async ()=> {
+    const newBlog = {
+        title: 'Go To Statement Considered Harmful 2',
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+        likes: 5,
+    } 
+    await api
+    .post(`/api/blogs`)
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsInDb = await helper.blogsInDb()
+    assert.strictEqual(blogsInDb.length, helper.blogs.length+1)
+
+    const titles = blogsInDb.map(b=> b.title)
+    assert(titles.includes(newBlog.title))
+
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
