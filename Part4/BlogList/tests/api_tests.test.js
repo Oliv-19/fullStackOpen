@@ -55,6 +55,24 @@ test('saves new blog succesfully', async ()=> {
 
 })
 
+test('likes default to 0 when new blog is created', async ()=> {
+    const newBlog = {
+        title: 'Go To Statement Considered Harmful 2',
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+    } 
+    await api
+    .post(`/api/blogs`)
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+    const blogsInDb = await helper.blogsInDb()
+    const blog = blogsInDb.find(b=> b.title == newBlog.title)
+    
+    assert.strictEqual(blog.likes, 0)
+
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
