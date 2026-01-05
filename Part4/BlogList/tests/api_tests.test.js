@@ -72,6 +72,48 @@ test('likes default to 0 when new blog is created', async ()=> {
     assert.strictEqual(blog.likes, 0)
 
 })
+test('throws error when title is missing', async ()=> {
+    const newBlog = {
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+
+    } 
+    await api
+    .post(`/api/blogs`)
+    .send(newBlog)
+    .expect(400)
+
+    const blogsInDb = await helper.blogsInDb()
+    assert.strictEqual(blogsInDb.length, helper.blogs.length)
+
+})
+test('throws error when url is missing', async ()=> {
+    const newBlog = {
+        title: 'Go To Statement Considered Harmful 2',
+        author: 'Edsger W. Dijkstra',
+    } 
+    await api
+    .post(`/api/blogs`)
+    .send(newBlog)
+    .expect(400)
+
+    const blogsInDb = await helper.blogsInDb()
+    assert.strictEqual(blogsInDb.length, helper.blogs.length)
+
+})
+test('throws error when title and url are missing', async ()=> {
+    const newBlog = {
+        author: 'Edsger W. Dijkstra',
+    } 
+    await api
+    .post(`/api/blogs`)
+    .send(newBlog)
+    .expect(400)
+
+    const blogsInDb = await helper.blogsInDb()
+    assert.strictEqual(blogsInDb.length, helper.blogs.length)
+
+})
 
 after(async () => {
     await mongoose.connection.close()
