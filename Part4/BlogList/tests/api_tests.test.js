@@ -128,6 +128,36 @@ test('deletes blog succesfully', async ()=> {
     assert.strictEqual(blogsAtEnd.length, helper.blogs.length-1)
 
 })
+test('blog can be viewed', async ()=> {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToView= blogsAtStart[0]
+    
+    const response = await api
+    .get(`/api/blogs/${blogToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    assert.deepStrictEqual(response.body, blogToView)
+
+})
+
+test('blog likes can be updated', async ()=> {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate= blogsAtStart[0]
+
+    const blog = {
+        likes: blogToUpdate.likes+1,
+    } 
+    
+    const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(blog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    assert.deepStrictEqual(response.body.likes, blog.likes)
+
+})
 
 
 
