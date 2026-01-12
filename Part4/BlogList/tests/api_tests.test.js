@@ -35,11 +35,13 @@ test('unique identifier is named id instead of _id', async ()=> {
 })
 
 test('saves new blog succesfully', async ()=> {
+    const users = await helper.usersInDb()
     const newBlog = {
         title: 'Go To Statement Considered Harmful 2',
         author: 'Edsger W. Dijkstra',
         url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
         likes: 5,
+        userId: users[0].id
     } 
     await api
     .post(`/api/blogs`)
@@ -56,10 +58,12 @@ test('saves new blog succesfully', async ()=> {
 })
 
 test('likes default to 0 when new blog is created', async ()=> {
+    const users = await helper.usersInDb()
     const newBlog = {
         title: 'Go To Statement Considered Harmful 2',
         author: 'Edsger W. Dijkstra',
         url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+        userId: users[0].id
     } 
     await api
     .post(`/api/blogs`)
