@@ -17,4 +17,12 @@ const errorHandler =(error, req, res, next) => {
   next(error)
 }
 
-module.exports = {unknownEndpoint, errorHandler}
+const tokenExtactor = ( request, response, next) => {
+  const authorization = request.headers.authorization
+  if(authorization && authorization.startsWith('Bearer ')){
+    request.token = authorization.replace('Bearer ', '')
+  }
+  next()
+}
+
+module.exports = {unknownEndpoint, errorHandler, tokenExtactor}
