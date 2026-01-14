@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const BlogRouter = require('./controllers/blogs')
 const config = require('./utils/config')
 const userRouter = require('./controllers/users')
-const { unknownEndpoint, errorHandler, tokenExtactor } = require('./utils/middlewares')
+const { unknownEndpoint, errorHandler, tokenExtactor, userExtactor } = require('./utils/middlewares')
 const loginRouter = require('./controllers/login')
 
 const app = express()
