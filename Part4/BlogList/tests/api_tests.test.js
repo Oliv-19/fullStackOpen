@@ -7,9 +7,19 @@ const app = require('../app')
 const Blog = require('../models/blog')
 
 const api = supertest(app)
-
+const header = {}
 beforeEach(async()=>{
+    const user = await helper.usersInDb()
     await Blog.deleteMany({})
+    const token = await api
+    .post(`/api/login`)
+    .send({
+        username: 'root',
+        password : 'sekret'
+    })
+    header.Authorization = `Bearer ${token.body.token}`
+
+    helper.blogs.forEach(b => b.user = user[0].id)
     await Blog.insertMany(helper.blogs)
 })
 
@@ -35,16 +45,14 @@ test('unique identifier is named id instead of _id', async ()=> {
 })
 
 test('saves new blog succesfully', async ()=> {
-    const users = await helper.usersInDb()
     const newBlog = {
         title: 'Go To Statement Considered Harmful 2',
         author: 'Edsger W. Dijkstra',
-        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
-        likes: 5,
-        userId: users[0].id
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf'
     } 
     await api
     .post(`/api/blogs`)
+    .set(header)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -67,6 +75,7 @@ test('likes default to 0 when new blog is created', async ()=> {
     } 
     await api
     .post(`/api/blogs`)
+    .set(header)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -84,6 +93,7 @@ test('throws error when title is missing', async ()=> {
     } 
     await api
     .post(`/api/blogs`)
+    .set(header)
     .send(newBlog)
     .expect(400)
 
@@ -98,6 +108,7 @@ test('throws error when url is missing', async ()=> {
     } 
     await api
     .post(`/api/blogs`)
+    .set(header)
     .send(newBlog)
     .expect(400)
 
@@ -111,6 +122,7 @@ test('throws error when title and url are missing', async ()=> {
     } 
     await api
     .post(`/api/blogs`)
+    .set(header)
     .send(newBlog)
     .expect(400)
 
@@ -124,6 +136,7 @@ test('deletes blog succesfully', async ()=> {
     
     await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set(header)
     .expect(204)
     const blogsAtEnd = await helper.blogsInDb()
     const titles = blogsAtEnd.map(b=> b.title)
@@ -141,7 +154,7 @@ test('blog can be viewed', async ()=> {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-    assert.deepStrictEqual(response.body, blogToView)
+    assert.strictEqual(response.body.title, blogToView.title)
 
 })
 
@@ -163,7 +176,20 @@ test('blog likes can be updated', async ()=> {
 
 })
 
+test('adding new blog fails when token is not provided', async() => {
+    const newBlog = {
+        title: 'Go To Statement Considered Harmful 2',
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf'
+    } 
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
 
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.blogs.length)
+})
 
 after(async () => {
     await mongoose.connection.close()

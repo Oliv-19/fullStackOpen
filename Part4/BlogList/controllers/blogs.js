@@ -42,16 +42,8 @@ BlogRouter.put('/:id', async(request, response) => {
 })
 
 BlogRouter.delete('/:id', userExtactor, async(request, response) => {
-  // const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // if(!decodedToken. id){
-  //   return response.status(400).json({error: 'token invalid'})
-  // }
-
-  // const user = await User.findById(decodedToken.id)
-  // if(!user){
-  //   return response.status(400).json({error: 'userId missing or not valid'})
-  // }
   const user = request.user
+  
   const blog = await Blog.findById(request.params.id)
   if(blog.user.toString() == user.id.toString()){
     await blog.deleteOne()
