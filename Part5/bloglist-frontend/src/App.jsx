@@ -3,13 +3,14 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginServices from './services/login'
 
-const Form = ({newBlog, setNewBlog}) => {
+const Form = ({newBlog, setNewBlog, setNotification}) => {
   const [isSubmitted, setisSubmitted] = useState(false)
 
   useEffect(() =>{
     if(isSubmitted) {
       const createNewBlog = async() =>{
         await blogService.create(newBlog)
+        setNotification({message: `a new blog ${newBlog.title} by ${newBlog.author} added`, error:false})
         setNewBlog({})
       }
       createNewBlog()
@@ -56,6 +57,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [newBlog, setNewBlog] = useState({})
+  const [notification, setNotification] = useState({message: '', error: false})
   
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('loggedUser')
@@ -107,6 +109,17 @@ const App = () => {
       setPassword(e.target.value)
     }
   }
+  const showNotification = () => {
+    setTimeout(() => {
+      setNotification({message:'', error: false})
+    }, 1000)
+    return (
+       <div style={{border: `1px solid ${notification.error? 'red': 'green'}`,
+       color:`${notification.error? 'red': 'green'}`}}>
+          {notification.message}
+        </div>
+    )
+  }
 
   if(user === null){
     return (
@@ -130,9 +143,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <h4>{user.username} has logged in</h4>
+      {notification.message && showNotification()}
+      <h4>{user.username} logged in</h4>
       <button onClick={handleLogout}>log out</button>
-      <Form newBlog={newBlog} setNewBlog={setNewBlog}></Form>
+      <Form newBlog={newBlog} setNewBlog={setNewBlog} setNotification= {setNotification}></Form>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
