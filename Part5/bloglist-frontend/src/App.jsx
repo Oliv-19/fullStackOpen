@@ -3,25 +3,78 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginServices from './services/login'
 
+const Form = ({newBlog, setNewBlog}) => {
+  const [isSubmitted, setisSubmitted] = useState(false)
+
+  useEffect(() =>{
+    if(isSubmitted) {
+      const createNewBlog = async() =>{
+        await blogService.create(newBlog)
+        setNewBlog({})
+      }
+      createNewBlog()
+      setisSubmitted(false)
+    }
+  }, [isSubmitted])
+
+  const handleChange = (e) => {
+    const name = e.target.id
+    setNewBlog((prev) =>({...prev, [name] : e.target.value}))
+  }
+  return (
+    <div>
+        <h1>Create new blog</h1>
+        <form action="" onSubmit={(e) => {
+            e.preventDefault()
+            setisSubmitted(true)
+          }}>
+          <label>
+            title:
+            <input onChange={handleChange} type="text" name="title" id="title" />
+          </label>
+          <br />
+          <label>
+            author:
+            <input onChange={handleChange} type="text" name="author" id="author" />
+          </label>
+          <br />
+
+          <label>
+            url:
+            <input onChange={handleChange} type="text" name="url" id="url" />
+          </label>
+          <br />
+          <button type="submit">create</button>
+        </form>
+      </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [newBlog, setNewBlog] = useState({})
   
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('loggedUser')
     if(loggedUser){
       const user = JSON.parse(loggedUser)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
+    if(!Object.keys(newBlog).includes('title')){
+      const getBlogs = async() =>{
+        const allBlogs = await blogService.getAll()
+        setBlogs( allBlogs )
+      }
+      getBlogs()
+    }
+  }, [newBlog])
 
   const handleLogin = async(e) => {
     e.preventDefault()
@@ -29,6 +82,7 @@ const App = () => {
 
       const user = await loginServices.login({username, password})
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -78,6 +132,7 @@ const App = () => {
       <h2>blogs</h2>
       <h4>{user.username} has logged in</h4>
       <button onClick={handleLogout}>log out</button>
+      <Form newBlog={newBlog} setNewBlog={setNewBlog}></Form>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
