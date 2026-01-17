@@ -1,55 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginServices from './services/login'
-
-const Form = ({newBlog, setNewBlog, setNotification}) => {
-  const [isSubmitted, setisSubmitted] = useState(false)
-
-  useEffect(() =>{
-    if(isSubmitted) {
-      const createNewBlog = async() =>{
-        await blogService.create(newBlog)
-        setNotification({message: `a new blog ${newBlog.title} by ${newBlog.author} added`, error:false})
-        setNewBlog({})
-      }
-      createNewBlog()
-      setisSubmitted(false)
-    }
-  }, [isSubmitted])
-
-  const handleChange = (e) => {
-    const name = e.target.id
-    setNewBlog((prev) =>({...prev, [name] : e.target.value}))
-  }
-  return (
-    <div>
-        <h1>Create new blog</h1>
-        <form action="" onSubmit={(e) => {
-            e.preventDefault()
-            setisSubmitted(true)
-          }}>
-          <label>
-            title:
-            <input onChange={handleChange} type="text" name="title" id="title" />
-          </label>
-          <br />
-          <label>
-            author:
-            <input onChange={handleChange} type="text" name="author" id="author" />
-          </label>
-          <br />
-
-          <label>
-            url:
-            <input onChange={handleChange} type="text" name="url" id="url" />
-          </label>
-          <br />
-          <button type="submit">create</button>
-        </form>
-      </div>
-  )
-}
+import Togglable from './components/Togglable'
+import NewBlogForm from './components/NewBlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -58,6 +13,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [newBlog, setNewBlog] = useState({})
   const [notification, setNotification] = useState({message: '', error: false})
+  const blogFormRef = useRef()
   
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('loggedUser')
@@ -102,17 +58,10 @@ const App = () => {
     
   }
 
-  const handleChange = (e) => {
-    if(e.target.id == 'usernameInput'){
-      setUsername(e.target.value)
-    }else if( e.target.id == 'passwordInput'){
-      setPassword(e.target.value)
-    }
-  }
   const showNotification = () => {
     setTimeout(() => {
       setNotification({message:'', error: false})
-    }, 1000)
+    }, 5000)
     return (
        <div style={{border: `1px solid ${notification.error? 'red': 'green'}`,
        color:`${notification.error? 'red': 'green'}`}}>
@@ -120,33 +69,29 @@ const App = () => {
         </div>
     )
   }
+  const createNewBlog = async(e) =>{
+      e.preventDefault()
+      blogFormRef.current.toggleVisibility()
+      await blogService.create(newBlog)
+      setNotification({message: `a new blog ${newBlog.title} by ${newBlog.author} added`, error:false})
+      setNewBlog({})
+    }
 
   if(user === null){
-    return (
-      <div>
-          <h1>Log in to application</h1>
-          <form action="" onSubmit={handleLogin}>
-            <label >
-              Username
-              <input onChange={handleChange} id='usernameInput' type="text" />
-            </label>
-            <label >
-              Password
-              <input onChange={handleChange} id='passwordInput' type="password" />
-            </label>
-            <button type="submit">log in</button>
-          </form>
-      </div>
-    )
+    return <LoginForm handleLogin={handleLogin} setPassword={setPassword} setUsername={setUsername} />
   } 
 
   return (
     <div>
       <h2>blogs</h2>
       {notification.message && showNotification()}
-      <h4>{user.username} logged in</h4>
-      <button onClick={handleLogout}>log out</button>
-      <Form newBlog={newBlog} setNewBlog={setNewBlog} setNotification= {setNotification}></Form>
+      <h4>
+        {user.username} logged in
+        <button onClick={handleLogout}>log out</button>
+      </h4>
+      <Togglable buttonLabel={'Create new Blog'} ref={blogFormRef}>
+        <NewBlogForm newBlog={newBlog} setNewBlog={setNewBlog} setNotification= {setNotification} createNewBlog={createNewBlog}/>
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
