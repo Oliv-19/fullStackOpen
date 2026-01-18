@@ -11,7 +11,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [newBlog, setNewBlog] = useState({})
   const [notification, setNotification] = useState({message: '', error: false})
   const blogFormRef = useRef()
   
@@ -23,17 +22,15 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+  const getBlogs = async() =>{
+    const allBlogs = await blogService.getAll()
+    setBlogs( allBlogs )
+  }
 
   useEffect(() => {
-    if(!Object.keys(newBlog).includes('title')){
-      const getBlogs = async() =>{
-        const allBlogs = await blogService.getAll()
-        setBlogs( allBlogs )
-      }
       getBlogs()
-    }
-  }, [newBlog])
-
+  }, [])
+  
   const handleLogin = async(e) => {
     e.preventDefault()
     try {
@@ -69,12 +66,11 @@ const App = () => {
         </div>
     )
   }
-  const createNewBlog = async(e) =>{
-      e.preventDefault()
+  const createNewBlog = async(newBlog) =>{
       blogFormRef.current.toggleVisibility()
       await blogService.create(newBlog)
       setNotification({message: `a new blog ${newBlog.title} by ${newBlog.author} added`, error:false})
-      setNewBlog({})
+      getBlogs()
     }
 
   if(user === null){
@@ -90,7 +86,7 @@ const App = () => {
         <button onClick={handleLogout}>log out</button>
       </h4>
       <Togglable buttonLabel={'Create new Blog'} ref={blogFormRef}>
-        <NewBlogForm newBlog={newBlog} setNewBlog={setNewBlog} setNotification= {setNotification} createNewBlog={createNewBlog}/>
+        <NewBlogForm setNotification= {setNotification} createNewBlog={createNewBlog}/>
       </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
