@@ -24,6 +24,7 @@ const App = () => {
   }, [])
   const getBlogs = async() =>{
     const allBlogs = await blogService.getAll()
+    allBlogs.sort((a, b) => a.likes + b.likes)
     setBlogs( allBlogs )
   }
 
