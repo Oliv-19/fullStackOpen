@@ -1,6 +1,5 @@
 import { useState } from "react"
-
-const Blog = ({ blog }) => {
+const Blog = ({ blog ,handleLikes}) => {
   const [isOpen, setIsOpen] = useState(false)
   const isVisible = () =>{
     setIsOpen(!isOpen)
@@ -11,13 +10,16 @@ const Blog = ({ blog }) => {
     padding:'5px',
     margin: '5'
   }
+  const likeBlog = async() =>{
+    handleLikes(blog)
+  }
   return (
     <div style={styles }>
     {isOpen? (
         <>
           <p>{blog.title} <button onClick={isVisible}>hide</button></p> 
           <p>{blog.url}</p>
-          <p>likes {blog.likes} <button>like</button></p>
+          <p>likes {blog.likes} <button onClick={likeBlog}>like</button></p>
           <p>{blog.author}</p>
         </>
       ): (

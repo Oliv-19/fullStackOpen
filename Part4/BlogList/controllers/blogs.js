@@ -32,13 +32,17 @@ BlogRouter.post('/', userExtactor, async(request, response) => {
   response.status(201).json(newBlog)
 })
 
-BlogRouter.put('/:id', async(request, response) => {
+BlogRouter.put('/:id', userExtactor, async(request, response) => {
   const { likes } = request.body
+  const user = request.user
   const blog = await Blog.findById(request.params.id)
-  
-  blog.likes = likes
-  const updated = await blog.save()
-  response.json(updated)
+
+  if(blog.user.toString() == user.id.toString()){
+    blog.likes = likes
+    const updated = await blog.save()
+    response.json(updated)
+
+  }
 })
 
 BlogRouter.delete('/:id', userExtactor, async(request, response) => {
