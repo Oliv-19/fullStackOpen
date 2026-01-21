@@ -1,17 +1,20 @@
 import { useState } from "react"
-const Blog = ({ blog ,handleLikes}) => {
+const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog}) => {
   const [isOpen, setIsOpen] = useState(false)
   const isVisible = () =>{
     setIsOpen(!isOpen)
+  }
+  const likeBlog = async() =>{
+    handleLikes(blog)
+  }
+  const deleteBlog = async() => {
+    handleDeleteBlog(blog)
   }
   let styles = {
     border: '1px solid black',
     width: 'fit-content',
     padding:'5px',
     margin: '5'
-  }
-  const likeBlog = async() =>{
-    handleLikes(blog)
   }
   return (
     <div style={styles }>
@@ -21,6 +24,8 @@ const Blog = ({ blog ,handleLikes}) => {
           <p>{blog.url}</p>
           <p>likes {blog.likes} <button onClick={likeBlog}>like</button></p>
           <p>{blog.author}</p>
+          {isUserBlog == true && <button onClick={deleteBlog}>Remove</button>
+          }
         </>
       ): (
         <>

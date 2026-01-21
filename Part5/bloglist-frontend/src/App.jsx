@@ -79,6 +79,13 @@ const App = () => {
     getBlogs()
 
   }
+  const handleDeleteBlog = async(blog) => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+      await blogService.destroy(blog)
+      getBlogs()
+    }
+
+  }
 
   if(user === null){
     return <LoginForm handleLogin={handleLogin} setPassword={setPassword} setUsername={setUsername} />
@@ -96,7 +103,7 @@ const App = () => {
         <NewBlogForm setNotification= {setNotification} createNewBlog={createNewBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLikes ={handleLikes}/>
+        <Blog key={blog.id} blog={blog} isUserBlog={user.username == blog.user.username} handleLikes ={handleLikes} handleDeleteBlog={handleDeleteBlog}/>
       )}
     </div>
   )

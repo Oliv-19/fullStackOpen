@@ -49,8 +49,12 @@ BlogRouter.delete('/:id', userExtactor, async(request, response) => {
   const user = request.user
   
   const blog = await Blog.findById(request.params.id)
+  
   if(blog.user.toString() == user.id.toString()){
+    const userBlogs = user.blogs.filter(b => b._id.toString() !== blog._id.toString())
     await blog.deleteOne()
+    user.blogs = userBlogs
+    await user.save()
     response.status(204).end()
   }
   
