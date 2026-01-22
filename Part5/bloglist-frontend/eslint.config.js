@@ -16,6 +16,12 @@ export default [
         sourceType: 'module'
       }
     },
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest
+      }
+    },
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh
@@ -37,6 +43,6 @@ export default [
       'object-curly-spacing': ['error', 'always'],
       'arrow-spacing': ['error', { before: true, after: true }],
       'no-console': 'off'
-    }
+    },
   }
 ]

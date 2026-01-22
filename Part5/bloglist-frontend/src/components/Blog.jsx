@@ -17,7 +17,7 @@ const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog }) => {
     margin: '5'
   }
   return (
-    <div style={styles }>
+    <div className='blog' style={styles }>
       {isOpen? (
         <>
           <p>{blog.title} <button onClick={isVisible}>hide</button></p>
