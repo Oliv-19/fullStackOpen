@@ -29,7 +29,7 @@ const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog }) => {
         </>
       ): (
         <>
-          {blog.title} {blog.author} <button onClick={isVisible}>view</button>
+          {blog.title} {blog.author} <button data-testId='viewBtn' onClick={isVisible}>view</button>
         </>
       )}
     </div>
