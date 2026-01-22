@@ -11,9 +11,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState({message: '', error: false})
+  const [notification, setNotification] = useState( { message: '', error: false } )
   const blogFormRef = useRef()
-  
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('loggedUser')
     if(loggedUser){
@@ -22,29 +21,27 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-  const getBlogs = async() =>{
+  const getBlogs = async() => {
     const allBlogs = await blogService.getAll()
     allBlogs.sort((a, b) => a.likes + b.likes)
     setBlogs( allBlogs )
   }
 
   useEffect(() => {
-      getBlogs()
+    getBlogs()
   }, [])
-  
   const handleLogin = async(e) => {
     e.preventDefault()
     try {
 
-      const user = await loginServices.login({username, password})
+      const user = await loginServices.login({ username, password })
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch {
-      console.error('Wrong credentials');
-      
+      console.error('Wrong credentials')
     }
   }
 
@@ -53,28 +50,27 @@ const App = () => {
     setUser(null)
     setUsername('')
     setPassword('')
-    
   }
 
   const showNotification = () => {
     setTimeout(() => {
-      setNotification({message:'', error: false})
+      setNotification({ message:'', error: false })
     }, 5000)
     return (
-       <div style={{border: `1px solid ${notification.error? 'red': 'green'}`,
-       color:`${notification.error? 'red': 'green'}`}}>
-          {notification.message}
-        </div>
+      <div style={{ border: `1px solid ${notification.error? 'red': 'green'}`,
+        color:`${notification.error? 'red': 'green'}` }}>
+        {notification.message}
+      </div>
     )
   }
-  const createNewBlog = async(newBlog) =>{
+  const createNewBlog = async(newBlog) => {
     blogFormRef.current.toggleVisibility()
     await blogService.create(newBlog)
-    setNotification({message: `a new blog ${newBlog.title} by ${newBlog.author} added`, error:false})
+    setNotification({ message: `a new blog ${newBlog.title} by ${newBlog.author} added`, error:false })
     getBlogs()
   }
   const handleLikes = async(blog) => {
-    const updatedBlog = {...blog, likes: blog.likes+1}
+    const updatedBlog = { ...blog, likes: blog.likes+1 }
     await blogService.update(updatedBlog)
     getBlogs()
 
@@ -89,7 +85,7 @@ const App = () => {
 
   if(user === null){
     return <LoginForm handleLogin={handleLogin} setPassword={setPassword} setUsername={setUsername} />
-  } 
+  }
 
   return (
     <div>
@@ -103,7 +99,7 @@ const App = () => {
         <NewBlogForm setNotification= {setNotification} createNewBlog={createNewBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} isUserBlog={user.username == blog.user.username} handleLikes ={handleLikes} handleDeleteBlog={handleDeleteBlog}/>
+        <Blog key={blog.id} blog={blog} isUserBlog={user.username === blog.user.username} handleLikes ={handleLikes} handleDeleteBlog={handleDeleteBlog}/>
       )}
     </div>
   )

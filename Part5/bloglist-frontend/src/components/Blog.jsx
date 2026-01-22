@@ -1,10 +1,10 @@
-import { useState } from "react"
-const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog}) => {
+import { useState } from 'react'
+const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const isVisible = () =>{
+  const isVisible = () => {
     setIsOpen(!isOpen)
   }
-  const likeBlog = async() =>{
+  const likeBlog = async() => {
     handleLikes(blog)
   }
   const deleteBlog = async() => {
@@ -18,20 +18,20 @@ const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog}) => {
   }
   return (
     <div style={styles }>
-    {isOpen? (
+      {isOpen? (
         <>
-          <p>{blog.title} <button onClick={isVisible}>hide</button></p> 
+          <p>{blog.title} <button onClick={isVisible}>hide</button></p>
           <p>{blog.url}</p>
           <p>likes {blog.likes} <button onClick={likeBlog}>like</button></p>
           <p>{blog.author}</p>
-          {isUserBlog == true && <button onClick={deleteBlog}>Remove</button>
+          {isUserBlog === true && <button onClick={deleteBlog}>Remove</button>
           }
         </>
       ): (
         <>
           {blog.title} {blog.author} <button onClick={isVisible}>view</button>
-        </>    
-    )}
+        </>
+      )}
     </div>
 
   )
