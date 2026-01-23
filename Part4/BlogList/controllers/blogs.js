@@ -57,8 +57,6 @@ BlogRouter.delete('/:id', userExtactor, async(request, response) => {
     await user.save()
     response.status(204).end()
   }
-  
-  
 })
 
 module.exports = BlogRouter
