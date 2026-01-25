@@ -76,6 +76,22 @@ describe('Blog app', () => {
         await page.getByRole('button', {name: 'view'}).click()
         await expect(page.getByRole('button', {name: 'Remove'})).not.toBeVisible()
       })
+      test("blogs are sorted by likes", async ({page}) => {
+        await page.getByText('Create new blog').click()
+        await page.getByLabel('title:').fill('test blog 2')
+        await page.getByLabel('author:').fill('root')
+        await page.getByLabel('url:').fill('none')
+        await page.getByRole('button', {name: 'create'}).click()
+        await expect(page.getByText('test blog 2 root')).toBeVisible()
+
+        await page.getByRole('button', {name: 'view'}).first().click()
+        await page.getByRole('button', {name: 'like'}).click()
+        await expect(page.getByText('likes 1')).toBeVisible()
+        await page.getByRole('button', {name: 'hide'}).click()
+
+        const blogs = page.locator('#test-blog:above(div#test-blog-2)')
+        expect(blogs).toBeVisible()
+      })
     })
   })
 })

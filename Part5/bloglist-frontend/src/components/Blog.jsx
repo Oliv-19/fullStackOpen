@@ -17,12 +17,12 @@ const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog }) => {
     margin: '5'
   }
   return (
-    <div className='blog' style={styles }>
+    <div className='blog' id={blog.title.split(' ').join('-')} style={styles }>
       {isOpen? (
         <>
           <p>{blog.title} <button onClick={isVisible}>hide</button></p>
           <p>{blog.url}</p>
-          <p>likes {blog.likes} <button data-testid='likeBtn' onClick={likeBlog}>like</button></p>
+          <p className='likes'>likes {blog.likes} <button data-testid='likeBtn' onClick={likeBlog}>like</button></p>
           <p>{blog.author}</p>
           {isUserBlog === true && <button onClick={deleteBlog}>Remove</button>
           }
