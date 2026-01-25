@@ -6,6 +6,7 @@ describe('Blog app', () => {
     await page.goto('http://localhost:5173')
     await resetDB(request)
     await createUser(request, 'root', 'sekret', 'root')
+    await createUser(request, 'test', '12345', 'test')
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -66,6 +67,14 @@ describe('Blog app', () => {
         await expect(page.getByRole('button', {name: 'Remove'})).toBeVisible()
         await page.getByRole('button', {name: 'Remove'}).click()
         await expect(page.getByText('test blog root')).not.toBeVisible()
+      })
+      test("a blog can't be deleted by another user", async ({page}) => {
+        await page.getByRole('button', {name: 'log out'}).click()
+        await page.getByLabel('Username').fill('test')
+        await page.getByLabel('Password').fill('12345')
+        await page.getByRole('button', {name: 'log in'}).click()
+        await page.getByRole('button', {name: 'view'}).click()
+        await expect(page.getByRole('button', {name: 'Remove'})).not.toBeVisible()
       })
     })
   })
