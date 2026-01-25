@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { resetDB, createUser } = require('./testHelper')
+const { resetDB, createUser, addBlog } = require('./testHelper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request}) => {
@@ -43,6 +43,21 @@ describe('Blog app', () => {
       await page.getByRole('button', {name: 'create'}).click()
 
       await expect(page.getByText('test blog root')).toBeVisible()
+    })
+    describe( 'When blog is created', async() => {
+      beforeEach(async ({page}) => {
+        await page.getByText('Create new blog').click()
+        await page.getByLabel('title:').fill('test blog')
+        await page.getByLabel('author:').fill('root')
+        await page.getByLabel('url:').fill('none')
+        await page.getByRole('button', {name: 'create'}).click()
+      })
+      test('a blog can be liked', async ({ page }) => {
+        await page.getByRole('button', {name: 'view'}).click()
+        await page.getByRole('button', {name: 'like'}).click()
+  
+        await expect(page.getByText('likes 1')).toBeVisible()
+      })
     })
   })
 })
