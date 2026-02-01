@@ -24,11 +24,19 @@ export const voteAnecdote = (id) => {
     payload: {id}
   }
 }
+export const addNew = (anecdote) => {
+  return {
+    type: 'ADD_NEW',
+    payload: asObject(anecdote)
+  }
+}
 
 const reducer = (state = initialState, action) => {
   console.log('state now: ', state)
   console.log('action', action)
   switch (action.type){
+    case 'ADD_NEW': 
+      return [...state, action.payload]
     case 'VOTE':{
       const toVote = state.find(a => a.id === action.payload.id)
       const voted = {
