@@ -11,10 +11,11 @@ export const AnecdoteForm = () => {
     }
     return (
         <form onSubmit={createNew}>
-        <div>
-          <input name='anecdote'/>
-        </div>
-        <button type='submit'>create</button>
+            <h2>create new</h2>
+            <div>
+            <input name='anecdote'/>
+            </div>
+            <button type='submit'>create</button>
       </form>
     )
 }
