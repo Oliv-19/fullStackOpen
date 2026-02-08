@@ -4,8 +4,7 @@ import { voteAnecdote } from "../reducers/anecdoteReducer"
 export const AnecdoteList = () => {
     const dispatch = useDispatch()
     const anecdotes = useSelector(({filter, anecdotes}) => {
-        let anecdotesFiltered =anecdotes
-        
+        let anecdotesFiltered =[...anecdotes]
         if(filter !== 'ALL'){
             anecdotesFiltered = anecdotes
               .filter(a => a.content.includes(filter) )
@@ -14,8 +13,8 @@ export const AnecdoteList = () => {
     }, shallowEqual)
 
     const vote = id => {
-    console.log('vote', id)
-    dispatch(voteAnecdote(id))
+        console.log('vote', id)
+        dispatch(voteAnecdote(id))
     }
 
     return (
