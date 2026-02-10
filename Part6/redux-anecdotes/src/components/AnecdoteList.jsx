@@ -17,7 +17,7 @@ export const AnecdoteList = () => {
 
     const vote = (anecdote) => {
         console.log('vote', anecdote.id)
-        dispatch(voteAnecdote(anecdote.id))
+        dispatch(voteAnecdote(anecdote))
         dispatch(changeNotification({message: `You voted '${anecdote.content}'`}))
         setTimeout(()=> {
             dispatch(removeNotification())
