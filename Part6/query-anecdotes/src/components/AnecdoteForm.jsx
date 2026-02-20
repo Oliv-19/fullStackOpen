@@ -15,9 +15,11 @@ const AnecdoteForm = () => {
   const onCreate = (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
-    messageDispatch({type: 'CREATED', payload: {anecdote: content, isError: false}})
     event.target.anecdote.value = ''
-    newAnecdoteMutation.mutate({content, votes : 0})
+    newAnecdoteMutation.mutate({content, votes : 0},{
+      onSuccess: messageDispatch({type: 'CREATED', payload: {anecdote: content, isError: false}}),
+      onError: messageDispatch({type: 'ERROR', payload: {anecdote: content, isError: true}})
+    })
     console.log('new anecdote')
   }
 
