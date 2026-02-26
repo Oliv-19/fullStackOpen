@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {BrowserRouter as Router, Routes, Route, Link, useParams} from 'react-router-dom'
+import {BrowserRouter as Router, Routes, Route, Link, useParams, redirect, Navigate} from 'react-router-dom'
 const Menu = () => {
   const padding = {
     paddingRight: 5
@@ -121,8 +121,11 @@ const App = () => {
   const [notification, setNotification] = useState('')
 
   const addNew = (anecdote) => {
+    
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(()=> setNotification(''), 5000)
   }
 
   const anecdoteById = (id) =>
@@ -144,11 +147,12 @@ const App = () => {
       <div>
         <h1>Software anecdotes</h1>
         <Menu />
+        {notification && notification}
         <Routes>
           <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />}></Route>
           <Route path='/anecdotes/:id' element={<Anecdote anecdotes={anecdotes} />}></Route>
           <Route path='/about' element={<About />}></Route>
-          <Route path='/create' element={<CreateNew addNew={addNew} />}></Route>
+          <Route path='/create' element={notification? <Navigate replace to='/'></Navigate> : <CreateNew addNew={addNew} />}></Route>
         </Routes>
   
         <Footer />
