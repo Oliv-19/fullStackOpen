@@ -5,16 +5,16 @@ import loginServices from "./services/login";
 import Togglable from "./components/Togglable";
 import NewBlogForm from "./components/NewBlogForm";
 import LoginForm from "./components/LoginForm";
+import {setNotification} from "./reducers/notificationReducer";
+import { useDispatch, useSelector} from "react-redux";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [notification, setNotification] = useState({
-    message: "",
-    error: false,
-  });
+  const dispatch = useDispatch()
+  const notification = useSelector(state => state.notifications)
   const blogFormRef = useRef();
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedUser");
@@ -38,7 +38,9 @@ const App = () => {
     try {
       const user = await loginServices.login({ username, password });
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
-      blogService.setToken(user.token);
+      blogService.setToken(user.token);  
+      
+      dispatch(setNotification(`User '${user.username}' logged in`, 5000))
       setUser(user);
       setUsername("");
       setPassword("");
@@ -49,15 +51,13 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
+    dispatch(setNotification(`User logged out`, 5000))
     setUser(null);
     setUsername("");
     setPassword("");
   };
 
   const showNotification = () => {
-    setTimeout(() => {
-      setNotification({ message: "", error: false });
-    }, 5000);
     return (
       <div
         style={{
@@ -72,10 +72,7 @@ const App = () => {
   const createNewBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility();
     await blogService.create(newBlog);
-    setNotification({
-      message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-      error: false,
-    });
+    dispatch(setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 5000));
     getBlogs();
   };
   const handleLikes = async (blog) => {
@@ -92,18 +89,21 @@ const App = () => {
 
   if (user === null) {
     return (
-      <LoginForm
-        handleLogin={handleLogin}
-        setPassword={setPassword}
-        setUsername={setUsername}
-      />
+      <>
+        {notification.message && showNotification()}
+        <LoginForm
+          handleLogin={handleLogin}
+          setPassword={setPassword}
+          setUsername={setUsername}
+          />
+      </>
     );
   }
 
   return (
     <div>
-      <h2>blogs</h2>
       {notification.message && showNotification()}
+      <h2>blogs</h2>
       <h4>
         {user.username} logged in
         <button onClick={handleLogout}>log out</button>
