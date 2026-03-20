@@ -7,7 +7,7 @@ const { unknownEndpoint, errorHandler, tokenExtactor, userExtactor } = require('
 const loginRouter = require('./controllers/login')
 
 const app = express()
-mongoose.connect(config.MONGODB_URI, { family: 4 })
+mongoose.connect(config.MONGODB_URI, { family: 4, dbName: 'blogApp',})
 .then(() => {
     console.log('connected to MongoDB');
 })

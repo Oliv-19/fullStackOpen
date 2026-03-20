@@ -7,15 +7,18 @@ import NewBlogForm from "./components/NewBlogForm";
 import LoginForm from "./components/LoginForm";
 import {setNotification} from "./reducers/notificationReducer";
 import { useDispatch, useSelector} from "react-redux";
+import { AddNewBlog, getAllBlogs } from "./reducers/BlogsReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const blogFormRef = useRef();
+
   const dispatch = useDispatch()
   const notification = useSelector(state => state.notifications)
-  const blogFormRef = useRef();
+  const blogs = useSelector(state => state.blogs)
+
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedUser");
     if (loggedUser) {
@@ -25,13 +28,12 @@ const App = () => {
     }
   }, []);
   const getBlogs = async () => {
-    const allBlogs = await blogService.getAll();
-    allBlogs.sort((a, b) => a.likes + b.likes);
-    setBlogs(allBlogs);
+    dispatch(getAllBlogs())
+ 
   };
-
   useEffect(() => {
     getBlogs();
+   
   }, []);
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -71,10 +73,12 @@ const App = () => {
   };
   const createNewBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility();
-    await blogService.create(newBlog);
+    dispatch(AddNewBlog(newBlog))
     dispatch(setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 5000));
     getBlogs();
+    
   };
+
   const handleLikes = async (blog) => {
     const updatedBlog = { ...blog, likes: blog.likes + 1 };
     await blogService.update(updatedBlog);
