@@ -8,9 +8,9 @@ import LoginForm from "./components/LoginForm";
 import {setNotification} from "./reducers/notificationReducer";
 import { useDispatch, useSelector} from "react-redux";
 import { AddNewBlog, deleteBlog, getAllBlogs, likeBlog } from "./reducers/BlogsReducer";
+import { saveUser } from "./reducers/UserReducer";
 
 const App = () => {
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const blogFormRef = useRef();
@@ -18,13 +18,13 @@ const App = () => {
   const dispatch = useDispatch()
   const notification = useSelector(state => state.notifications)
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedUser");
     if (loggedUser) {
       const user = JSON.parse(loggedUser);
-      setUser(user);
-      blogService.setToken(user.token);
+      dispatch(saveUser(user))
     }
   }, []);
   const getBlogs = async () => {
