@@ -7,7 +7,7 @@ import NewBlogForm from "./components/NewBlogForm";
 import LoginForm from "./components/LoginForm";
 import {setNotification} from "./reducers/notificationReducer";
 import { useDispatch, useSelector} from "react-redux";
-import { AddNewBlog, getAllBlogs } from "./reducers/BlogsReducer";
+import { AddNewBlog, deleteBlog, getAllBlogs, likeBlog } from "./reducers/BlogsReducer";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -80,14 +80,11 @@ const App = () => {
   };
 
   const handleLikes = async (blog) => {
-    const updatedBlog = { ...blog, likes: blog.likes + 1 };
-    await blogService.update(updatedBlog);
-    getBlogs();
+    dispatch(likeBlog(blog))
   };
   const handleDeleteBlog = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      await blogService.destroy(blog);
-      getBlogs();
+      dispatch(deleteBlog(blog))
     }
   };
 

@@ -4,12 +4,6 @@ const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog }) => {
   const isVisible = () => {
     setIsOpen(!isOpen);
   };
-  const likeBlog = async () => {
-    handleLikes(blog);
-  };
-  const deleteBlog = async () => {
-    handleDeleteBlog(blog);
-  };
   let styles = {
     border: "1px solid black",
     width: "fit-content",
@@ -26,12 +20,12 @@ const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog }) => {
           <p>{blog.url}</p>
           <p className="likes">
             likes {blog.likes}{" "}
-            <button data-testid="likeBtn" onClick={likeBlog}>
+            <button data-testid="likeBtn" onClick={()=> handleLikes(blog)}>
               like
             </button>
           </p>
           <p>{blog.author}</p>
-          {isUserBlog === true && <button onClick={deleteBlog}>Remove</button>}
+          {isUserBlog === true && <button onClick={()=> handleDeleteBlog(blog)}>Remove</button>}
         </>
       ) : (
         <>
