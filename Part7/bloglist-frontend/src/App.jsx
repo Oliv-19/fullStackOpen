@@ -9,7 +9,8 @@ import {setNotification} from "./reducers/notificationReducer";
 import { useDispatch, useSelector} from "react-redux";
 import { AddNewBlog, deleteBlog, getAllBlogs, likeBlog } from "./reducers/BlogsReducer";
 import { saveUser } from "./reducers/UserReducer";
-
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { Users } from "./components/Users";
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -29,11 +30,9 @@ const App = () => {
   }, []);
   const getBlogs = async () => {
     dispatch(getAllBlogs())
- 
   };
   useEffect(() => {
     getBlogs();
-   
   }, []);
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -100,7 +99,6 @@ const App = () => {
       </>
     );
   }
-
   return (
     <div>
       {notification.message && showNotification()}
@@ -124,6 +122,11 @@ const App = () => {
           handleDeleteBlog={handleDeleteBlog}
         />
       ))}
+        <Router>
+          <Routes>
+            <Route path='/users' element={<Users></Users>}></Route>
+          </Routes>
+        </Router>
     </div>
   );
 };
