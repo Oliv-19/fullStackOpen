@@ -13,6 +13,8 @@ import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { Users } from "./components/Users";
 import { User } from "./components/User";
 import UsersService from './services/users'
+import { Blogs } from "./components/Blogs";
+import { Nav } from "./components/Nav";
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +22,6 @@ const App = () => {
 
   const dispatch = useDispatch()
   const notification = useSelector(state => state.notifications)
-  const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
      
 
@@ -34,9 +35,6 @@ const App = () => {
   const getBlogs = async () => {
     dispatch(getAllBlogs())
   };
-  useEffect(() => {
-    getBlogs();
-  }, []);
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -104,29 +102,26 @@ const App = () => {
   }
   return (
     <div>
-      {notification.message && showNotification()}
-      <h2>blogs</h2>
-      <h4>
-        {user.username} logged in
-        <button onClick={handleLogout}>log out</button>
-      </h4>
-      <Togglable buttonLabel={"Create new Blog"} ref={blogFormRef}>
-        <NewBlogForm
-          setNotification={setNotification}
-          createNewBlog={createNewBlog}
-        />
-      </Togglable>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          isUserBlog={user.username === blog.user.username}
-          handleLikes={handleLikes}
-          handleDeleteBlog={handleDeleteBlog}
-        />
-      ))}
         <Router>
+          <Nav handleLogout={handleLogout}></Nav>
+          {notification.message && showNotification()}
+          <h2>blog app</h2>
+          <Togglable buttonLabel={"Create new Blog"} ref={blogFormRef}>
+            <NewBlogForm
+              setNotification={setNotification}
+              createNewBlog={createNewBlog}
+            />
+            </Togglable>
+            
           <Routes>
+            <Route index element={<Blogs getBlogs={getBlogs}></Blogs>}></Route>
+            <Route path='/blogs/:id' element={
+              <Blog 
+                handleLikes={handleLikes}
+                handleDeleteBlog={handleDeleteBlog}
+                getBlogs={getBlogs}>
+              </Blog>}>
+            </Route>
             <Route path='/users' element={<Users></Users>}></Route>
             <Route path='/users/:id' element={<User></User>}></Route>
           </Routes>

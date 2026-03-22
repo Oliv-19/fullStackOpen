@@ -1,42 +1,39 @@
-import { useState } from "react";
-const Blog = ({ blog, isUserBlog, handleLikes, handleDeleteBlog }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const isVisible = () => {
-    setIsOpen(!isOpen);
-  };
-  let styles = {
-    border: "1px solid black",
-    width: "fit-content",
-    padding: "5px",
-    margin: "5",
-  };
-  return (
-    <div className="blog" id={blog.title.split(" ").join("-")} style={styles}>
-      {isOpen ? (
-        <>
-          <p>
-            {blog.title} <button onClick={isVisible}>hide</button>
-          </p>
-          <p>{blog.url}</p>
-          <p className="likes">
-            likes {blog.likes}{" "}
-            <button data-testid="likeBtn" onClick={()=> handleLikes(blog)}>
-              like
-            </button>
-          </p>
-          <p>{blog.author}</p>
-          {isUserBlog === true && <button onClick={()=> handleDeleteBlog(blog)}>Remove</button>}
-        </>
-      ) : (
-        <>
-          {blog.title} {blog.author}{" "}
-          <button data-testid="viewBtn" onClick={isVisible}>
-            view
-          </button>
-        </>
-      )}
-    </div>
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+const Blog = ({ handleLikes, handleDeleteBlog, getBlogs}) => {
+  const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
+  const params = useParams()
+
+  useEffect(() => {
+    getBlogs();
+  }, [params.id]);
+
+  const blog = blogs?.find((b) => b.id === params.id)
+  const isUserBlog = user.username === blog?.user.username
+  if(!blog){
+    return (
+      <div>Loading...</div>
+    )
+  } else {
+    return (
+      <>
+      <h1>{blog.title}</h1>
+      {isUserBlog === true && <button onClick={()=> handleDeleteBlog(blog)}>Remove</button>}
+      <Link to={blog.url}>{blog.url}</Link>
+      <p className="likes">
+        likes {blog.likes}{" "}
+        <button data-testid="likeBtn" onClick={()=> handleLikes(blog)}>
+          like
+        </button>
+      </p>
+      <p>added by {blog.author}</p>
+    </>
+      
   );
+  }
+  
 };
 
 export default Blog;
