@@ -11,6 +11,8 @@ import { AddNewBlog, deleteBlog, getAllBlogs, likeBlog } from "./reducers/BlogsR
 import { saveUser } from "./reducers/UserReducer";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { Users } from "./components/Users";
+import { User } from "./components/User";
+import UsersService from './services/users'
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +22,7 @@ const App = () => {
   const notification = useSelector(state => state.notifications)
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
+     
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedUser");
@@ -86,7 +89,7 @@ const App = () => {
       dispatch(deleteBlog(blog))
     }
   };
-
+  
   if (user === null) {
     return (
       <>
@@ -125,6 +128,7 @@ const App = () => {
         <Router>
           <Routes>
             <Route path='/users' element={<Users></Users>}></Route>
+            <Route path='/users/:id' element={<User></User>}></Route>
           </Routes>
         </Router>
     </div>
