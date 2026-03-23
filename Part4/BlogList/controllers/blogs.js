@@ -32,6 +32,16 @@ BlogRouter.post('/', userExtactor, async(request, response) => {
   response.status(201).json(newBlog)
 })
 
+BlogRouter.post('/:id/comments', async(request, response) => {
+  const { comment } = request.body
+  const blog = await Blog.findById(request.params.id)
+  
+  blog.comments.push(comment)
+  const updated = await blog.save()
+  response.json(updated)
+})
+
+
 BlogRouter.put('/:id', userExtactor, async(request, response) => {
   const { likes } = request.body
   const blog = await Blog.findById(request.params.id)

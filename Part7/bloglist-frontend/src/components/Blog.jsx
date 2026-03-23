@@ -29,6 +29,11 @@ const Blog = ({ handleLikes, handleDeleteBlog, getBlogs}) => {
         </button>
       </p>
       <p>added by {blog.author}</p>
+      <h4>comments</h4>
+      <ul>
+        {blog.comments.map((comment) => <li>{comment}</li>)}
+
+      </ul>
     </>
       
   );
