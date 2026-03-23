@@ -1,10 +1,12 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { addComment } from "../reducers/BlogsReducer";
 const Blog = ({ handleLikes, handleDeleteBlog, getBlogs}) => {
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
   const params = useParams()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     getBlogs();
@@ -12,6 +14,16 @@ const Blog = ({ handleLikes, handleDeleteBlog, getBlogs}) => {
 
   const blog = blogs?.find((b) => b.id === params.id)
   const isUserBlog = user.username === blog?.user.username
+  
+  const comment = (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const comment = formData.get('comment')
+    console.log(comment);
+    dispatch(addComment(blog, comment))
+  }
+  
+  
   if(!blog){
     return (
       <div>Loading...</div>
@@ -30,8 +42,12 @@ const Blog = ({ handleLikes, handleDeleteBlog, getBlogs}) => {
       </p>
       <p>added by {blog.author}</p>
       <h4>comments</h4>
+      <form onSubmit={comment} action="">
+        <input type="text" name="comment"/>
+        <button type="submit">Add comment</button>
+      </form>
       <ul>
-        {blog.comments.map((comment) => <li>{comment}</li>)}
+        {blog.comments.map((comment, i) => <li key={i+comment}>{comment}</li>)}
 
       </ul>
     </>

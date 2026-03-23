@@ -23,6 +23,10 @@ const update = async (info) => {
   const response = await axios.put(`${baseUrl}/${info.id}`, info, config);
   return response.data;
 };
+const addComment = async (info) => {
+  const response = await axios.post(`${baseUrl}/${info.id}/comments`, {comment: info.comment});
+  return response.data;
+};
 const destroy = async (info) => {
   const config = {
     headers: { Authorization: token },
@@ -31,4 +35,4 @@ const destroy = async (info) => {
   return response.data;
 };
 
-export default { getAll, create, update, setToken, destroy };
+export default { getAll, create, update, setToken, destroy, addComment };

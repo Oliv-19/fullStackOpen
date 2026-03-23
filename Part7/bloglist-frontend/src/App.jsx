@@ -119,7 +119,8 @@ const App = () => {
               <Blog 
                 handleLikes={handleLikes}
                 handleDeleteBlog={handleDeleteBlog}
-                getBlogs={getBlogs}>
+                getBlogs={getBlogs}
+                >
               </Blog>}>
             </Route>
             <Route path='/users' element={<Users></Users>}></Route>
