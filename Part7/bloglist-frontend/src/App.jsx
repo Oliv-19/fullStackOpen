@@ -1,62 +1,44 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
-import loginServices from "./services/login";
-import Togglable from "./components/Togglable";
-import NewBlogForm from "./components/NewBlogForm";
 import LoginForm from "./components/LoginForm";
 import {setNotification} from "./reducers/notificationReducer";
 import { useDispatch, useSelector} from "react-redux";
-import { AddNewBlog, deleteBlog, getAllBlogs, likeBlog } from "./reducers/BlogsReducer";
-import { saveUser } from "./reducers/UserReducer";
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { deleteBlog, getAllBlogs, likeBlog } from "./reducers/BlogsReducer";
+import { logout, saveUser } from "./reducers/UserReducer";
+import { Routes, Route, useNavigate} from "react-router-dom";
 import { Users } from "./components/Users";
 import { User } from "./components/User";
-import UsersService from './services/users'
 import { Blogs } from "./components/Blogs";
 import { Nav } from "./components/Nav";
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const blogFormRef = useRef();
 
   const dispatch = useDispatch()
   const notification = useSelector(state => state.notifications)
   const user = useSelector(state => state.user)
-     
+  const navigate= useNavigate()
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedUser");
     if (loggedUser) {
       const user = JSON.parse(loggedUser);
       dispatch(saveUser(user))
+    }else{
+      navigate('/login')
     }
   }, []);
   const getBlogs = async () => {
     dispatch(getAllBlogs())
   };
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const user = await loginServices.login({ username, password });
-      window.localStorage.setItem("loggedUser", JSON.stringify(user));
-      blogService.setToken(user.token);  
-      
-      dispatch(setNotification(`User '${user.username}' logged in`, 5000))
-      setUser(user);
-      setUsername("");
-      setPassword("");
-    } catch {
-      console.error("Wrong credentials");
-    }
-  };
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser");
     dispatch(setNotification(`User logged out`, 5000))
-    setUser(null);
+    dispatch(logout(null))
     setUsername("");
     setPassword("");
+    navigate('/login')
   };
 
   const showNotification = () => {
@@ -71,13 +53,6 @@ const App = () => {
       </div>
     );
   };
-  const createNewBlog = async (newBlog) => {
-    blogFormRef.current.toggleVisibility();
-    dispatch(AddNewBlog(newBlog))
-    dispatch(setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 5000));
-    getBlogs();
-    
-  };
 
   const handleLikes = async (blog) => {
     dispatch(likeBlog(blog))
@@ -87,46 +62,34 @@ const App = () => {
       dispatch(deleteBlog(blog))
     }
   };
+  useEffect(()=> {
+    if(user){
+      navigate('/')
+    }
+  }, [user])
   
-  if (user === null) {
-    return (
-      <>
-        {notification.message && showNotification()}
-        <LoginForm
-          handleLogin={handleLogin}
-          setPassword={setPassword}
-          setUsername={setUsername}
-          />
-      </>
-    );
-  }
   return (
-    <div>
-        <Router>
-          <Nav handleLogout={handleLogout}></Nav>
-          {notification.message && showNotification()}
-          <h2>blog app</h2>
-          <Togglable buttonLabel={"Create new Blog"} ref={blogFormRef}>
-            <NewBlogForm
-              setNotification={setNotification}
-              createNewBlog={createNewBlog}
-            />
-            </Togglable>
-            
-          <Routes>
-            <Route index element={<Blogs getBlogs={getBlogs}></Blogs>}></Route>
-            <Route path='/blogs/:id' element={
-              <Blog 
-                handleLikes={handleLikes}
-                handleDeleteBlog={handleDeleteBlog}
-                getBlogs={getBlogs}
-                >
-              </Blog>}>
-            </Route>
-            <Route path='/users' element={<Users></Users>}></Route>
-            <Route path='/users/:id' element={<User></User>}></Route>
-          </Routes>
-        </Router>
+    <div className="container">
+      <Nav handleLogout={handleLogout}></Nav>
+      {notification.message && showNotification()}
+        
+      <Routes>
+        <Route path="/" element={<Blogs getBlogs={getBlogs}></Blogs>}></Route>
+        <Route path="/login" element={
+          <LoginForm password={{password,setPassword}} username={{username, setUsername}}/>
+          }>
+        </Route>
+        <Route path='/blogs/:id' element={
+          <Blog 
+            handleLikes={handleLikes}
+            handleDeleteBlog={handleDeleteBlog}
+            getBlogs={getBlogs}
+            >
+          </Blog>}>
+        </Route>
+        <Route path='/users' element={<Users></Users>}></Route>
+        <Route path='/users/:id' element={<User></User>}></Route>
+      </Routes>
     </div>
   );
 };

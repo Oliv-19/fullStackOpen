@@ -9,8 +9,6 @@ const notificationSlice = createSlice({
     initialState,
     reducers:{
          changeNotification(state, action){
-            console.log('idk');
-            
             return {message: action.payload.message}
         },
         removeNotification(state, action){

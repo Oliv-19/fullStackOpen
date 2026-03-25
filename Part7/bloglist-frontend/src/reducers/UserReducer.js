@@ -7,10 +7,14 @@ const userSlice = createSlice({
     reducers:{
         setUser (state, action){
             return action.payload
+        },
+        logout(state,action){
+            return null
         }
     }
 })
 const {setUser} = userSlice.actions
+export const {logout} = userSlice.actions
 export const saveUser = (user) => {
     return (dispatch) => {
         dispatch(setUser(user))

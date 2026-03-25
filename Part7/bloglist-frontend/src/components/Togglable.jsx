@@ -1,4 +1,5 @@
 import { useImperativeHandle, useState } from "react";
+import { Button } from "react-bootstrap";
 const Togglable = ({ ref, children }) => {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => {
@@ -12,10 +13,10 @@ const Togglable = ({ ref, children }) => {
       {isVisible ? (
         <>
           {children}
-          <button onClick={toggleVisibility}>Cancel</button>
+          <Button onClick={toggleVisibility}>Cancel</Button>
         </>
       ) : (
-        <button onClick={toggleVisibility}>Create new blog</button>
+        <Button onClick={toggleVisibility}>Create new blog</Button>
       )}
     </>
   );
